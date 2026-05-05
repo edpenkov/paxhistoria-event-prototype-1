@@ -89,8 +89,26 @@
 }
 
 .eventFrame--expanded {
-  /* Fixed test height for structure; swap to min-height / content later */
-  height: 240px;
+  align-items: stretch;
+}
+
+.eventFrame--expanded .eventContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 12px;
+}
+
+.eventContent__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.eventContent__stub {
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .eventContent {
@@ -166,6 +184,17 @@
   flex: 1;
   border: none;
   background: #1976d2;
+}
+
+button.reviewPanel__footerSlot {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.reviewPanel__footerSlot--primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .reviewPanel__footerChevron {
