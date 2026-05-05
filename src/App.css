@@ -71,6 +71,9 @@
 }
 
 .frameStack {
+  --event-motion-duration: 500ms;
+  --event-motion-delay-history: 100ms;
+  --event-motion-ease: cubic-bezier(0.2, 0, 0.1, 1);
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -88,7 +91,7 @@
   flex-shrink: 0;
   width: 100%;
   height: var(--active-viewport-height);
-  transition: height 300ms ease;
+  transition: height var(--event-motion-duration) var(--event-motion-ease);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -119,12 +122,12 @@
 
 .expandedActiveEvent__layer--outgoing {
   z-index: 1;
-  animation: expanded-active-out 300ms ease forwards;
+  animation: expanded-active-out var(--event-motion-duration) var(--event-motion-ease) forwards;
 }
 
 .expandedActiveEvent__layer--incoming {
   z-index: 2;
-  animation: expanded-active-in 300ms ease forwards;
+  animation: expanded-active-in var(--event-motion-duration) var(--event-motion-ease) forwards;
 }
 
 .expandedActiveEvent__single {
@@ -174,17 +177,28 @@
 
 .eventFrame--collapsed.eventFrame--collapsed-entering {
   overflow: hidden;
-  animation: collapsed-row-enter 300ms ease forwards;
+  animation:
+    collapsed-row-enter-height var(--event-motion-duration) var(--event-motion-ease) forwards,
+    collapsed-row-enter-opacity var(--event-motion-duration) var(--event-motion-ease)
+      var(--event-motion-delay-history) both;
 }
 
-@keyframes collapsed-row-enter {
+@keyframes collapsed-row-enter-height {
   from {
     height: 0;
-    opacity: 0;
   }
 
   to {
     height: 74px;
+  }
+}
+
+@keyframes collapsed-row-enter-opacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
     opacity: 1;
   }
 }

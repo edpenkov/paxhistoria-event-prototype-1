@@ -106,7 +106,7 @@ export default function App() {
 
   const handleCollapsedEnterAnimationEnd = useCallback((e) => {
     if (e.target !== e.currentTarget) return
-    if (e.animationName !== 'collapsed-row-enter') return
+    if (e.animationName !== 'collapsed-row-enter-opacity') return
     setEnteringCollapsedIndex(null)
   }, [])
 
