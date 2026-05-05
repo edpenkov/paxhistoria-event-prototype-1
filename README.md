@@ -1,3 +1,43 @@
+# Event Stack Motion Prototype
+
+## What This Prototype Demonstrates
+
+- Event review panel motion
+- Bottom-anchored event stack behavior
+- Collapsed history rows plus active viewport transition
+
+## How To Run
+
+```bash
+npm install
+npm run dev
+```
+
+## Key Files
+
+- `src/App.jsx`
+- `src/App.css`
+
+## Motion Model
+
+- `historyStack` grows upward as events are advanced
+- Newly collapsed row animates height `0 -> 74px`
+- `activeViewport` height changes via explicit per-event `expandedHeight` values
+- Active event content slides/fades between outgoing and incoming layers
+- No `height: auto` animation
+- No DOM measurement for viewport sizing
+
+## Motion Tokens
+
+- Duration: `500ms`
+- History opacity delay: `100ms`
+- Easing: `cubic-bezier(0.2, 0, 0.1, 1)`
+
+## Notes For Developers
+
+- Use this as a motion reference prototype, not production architecture
+- If production needs dynamic content height, use explicit heights or FLIP/layout animation
+- Do not animate to `height: auto`
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
