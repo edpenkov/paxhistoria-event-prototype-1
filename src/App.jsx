@@ -9,9 +9,6 @@ const LAST_EVENT_INDEX = 6
 /** Placeholder body heights (px) per active event — only the inner stub uses these. */
 const EXPANDED_STUB_MIN_HEIGHT_PX = [80, 140, 220, 110, 190, 150, 200]
 
-/** Label + gaps above stub; aligns activeViewport with ExpandedEventBody layout. */
-const EXPANDED_LAYER_EXTRA_MIN_PX = 48
-
 const EVENT_ITEMS = [
   {
     title: 'The Siege of Akrotiri',
@@ -19,6 +16,7 @@ const EVENT_ITEMS = [
     tags: ['Turkish Paratrooper Command', 'London', 'Akrotiri and Dhekelia'],
     description:
       'Following the consolidation of control over Southern Cyprus, Turkish forces have begun a tight encirclement of the British Sovereign Base Area at Akrotiri. London has described the cut-off of land routes as a major escalation, while Turkish command frames the move as perimeter security. RAF emergency sorties are now sustaining the base.',
+    expandedHeight: 266,
   },
   {
     title: 'The Dardanelles Bottleneck',
@@ -27,13 +25,15 @@ const EVENT_ITEMS = [
     description:
       'To counter the Greek Maritime Exclusion Zone, Turkiye has halted non-essential transit through the Dardanelles Strait. The bottleneck has trapped commercial shipping in the Marmara Sea and sharply increased insurance premiums across Mediterranean trade lanes.',
     actionLabel: 'View Map Changes',
+    expandedHeight: 262,
   },
   {
     title: 'Aegean Radar Standoff',
     meta: 'Jan 20th, 2016 • 2 Map changes',
     tags: ['Hellenic Air Force', 'Ankara', 'North Aegean'],
     description:
-      'Competing radar locks between Turkish and Greek patrol aircraft have intensified over the northern Aegean corridor. NATO liaison officers are now pushing for fast deconfliction channels to protect nearby civilian lanes.',
+      'Competing radar locks between Turkish and Greek patrol aircraft have intensified over the northern Aegean corridor, with both sides reporting repeated near-approach incidents during routine patrol windows. Civil aviation coordinators warn that the overlap between military maneuver zones and civilian routing has narrowed enough to require dynamic rerouting advisories during peak traffic periods. NATO liaison officers are now pushing for fast deconfliction channels, including pre-filed patrol lanes and mandatory response windows, to reduce the risk of miscalculation. Regional maritime command has also raised alert status for nearby support vessels in case an aerial incident triggers broader search-and-rescue operations. Intelligence desks in Athens and Ankara continue to exchange accusations of deliberate signaling pressure, further complicating diplomatic efforts to stabilize the corridor.',
+    expandedHeight: 438,
   },
   {
     title: 'Cypriot Port Security Sweep',
@@ -42,13 +42,15 @@ const EVENT_ITEMS = [
     description:
       'Cyprus has launched a port-wide security sweep after reports of covert logistics transfers through private terminals. Reinforced checkpoints are delaying outbound cargo and raising concern among regional insurers.',
     actionLabel: 'Review Security Brief',
+    expandedHeight: 258,
   },
   {
     title: 'Marmara Convoy Hold',
     meta: 'Jan 22nd, 2016 • 3 Map changes',
     tags: ['Turkish Navy', 'Marmara Sea', 'Commercial Shipping'],
     description:
-      'A multinational convoy was ordered to hold inside the Marmara Sea while maritime authorities reassessed escort guarantees. Freight analysts warn that prolonged detention could trigger shortages across Levantine distribution hubs.',
+      'A multinational convoy was ordered to hold inside the Marmara Sea while authorities reassessed escort guarantees. Operators now expect only short-term delays.',
+    expandedHeight: 208,
   },
   {
     title: 'RAF Emergency Airbridge',
@@ -57,6 +59,7 @@ const EVENT_ITEMS = [
     description:
       'The RAF has activated an emergency airbridge into Akrotiri to offset disrupted land routes. Sorties now prioritize fuel, medevac supplies, and runway support equipment as planners assess sustainability.',
     actionLabel: 'Open Flight Ledger',
+    expandedHeight: 244,
   },
   {
     title: 'Mediterranean Insurance Shock',
@@ -64,6 +67,7 @@ const EVENT_ITEMS = [
     tags: ['Lloyds Syndicates', 'Mediterranean Trade', 'Risk Desk'],
     description:
       'Marine underwriters issued coordinated premium revisions after risk advisories raised conflict exposure across eastern Mediterranean routes. Charter costs climbed immediately, with importers warning of near-term commodity price pressure.',
+    expandedHeight: 232,
   },
 ]
 
@@ -198,8 +202,7 @@ export default function App() {
 
   const nextDisabled = activeIndex >= LAST_EVENT_INDEX
 
-  const activeViewportHeightPx =
-    EXPANDED_STUB_MIN_HEIGHT_PX[activeIndex] + EXPANDED_LAYER_EXTRA_MIN_PX
+  const activeViewportHeightPx = EVENT_ITEMS[activeIndex].expandedHeight
 
   return (
     <div className="prototype">
