@@ -9,14 +9,20 @@ const LAST_EVENT_INDEX = 6
 /** Placeholder body heights (px) per active event — only the inner stub uses these. */
 const EXPANDED_STUB_MIN_HEIGHT_PX = [80, 140, 220, 110, 190, 150, 200]
 
+/** Label + gaps above stub; aligns activeViewport with ExpandedEventBody layout. */
+const EXPANDED_LAYER_EXTRA_MIN_PX = 48
+
 function toneClassForIndex(index) {
   return TONE_SUFFIXES[index % TONE_SUFFIXES.length]
 }
 
 /** Collapsed row: fixed 74px height via CSS; one DOM node per prior event index. */
-function CollapsedEventRow({ eventIndex }) {
+function CollapsedEventRow({ eventIndex, isEntering, onEnteringAnimationEnd }) {
   return (
-    <div className={`eventFrame eventFrame--collapsed eventFrame--${toneClassForIndex(eventIndex)}`}>
+    <div
+      className={`eventFrame eventFrame--collapsed${isEntering ? ' eventFrame--collapsed-entering' : ''} eventFrame--${toneClassForIndex(eventIndex)}`}
+      onAnimationEnd={isEntering ? onEnteringAnimationEnd : undefined}
+    >
       <div className="eventContent">Event {eventIndex + 1} (collapsed)</div>
     </div>
   )
@@ -34,12 +40,6 @@ function ExpandedEventBody({ eventIndex }) {
       />
     </>
   )
-}
-
-const EXPANDED_LAYER_EXTRA_MIN_PX = 48
-
-function expandedBlockMinHeightPx(eventIndex) {
-  return EXPANDED_STUB_MIN_HEIGHT_PX[eventIndex] + EXPANDED_LAYER_EXTRA_MIN_PX
 }
 
 /** Expanded card for the active index; animates content inside activeViewport only. */
@@ -67,13 +67,9 @@ function ExpandedActiveEvent({ eventIndex }) {
 
   const showTransitionLayers = isAnimating && prevIndex !== null
 
-  const shellMinHeight = showTransitionLayers
-    ? Math.max(expandedBlockMinHeightPx(prevIndex), expandedBlockMinHeightPx(currentIndex))
-    : undefined
-
   return (
     <div className={`eventFrame eventFrame--expanded eventFrame--${toneClassForIndex(currentIndex)}`}>
-      <div className="expandedActiveEvent" style={shellMinHeight ? { minHeight: shellMinHeight } : undefined}>
+      <div className="expandedActiveEvent">
         {showTransitionLayers ? (
           <>
             <div
@@ -106,12 +102,28 @@ function ExpandedActiveEvent({ eventIndex }) {
 
 export default function App() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [enteringCollapsedIndex, setEnteringCollapsedIndex] = useState(null)
+
+  const handleCollapsedEnterAnimationEnd = useCallback((e) => {
+    if (e.target !== e.currentTarget) return
+    if (e.animationName !== 'collapsed-row-enter') return
+    setEnteringCollapsedIndex(null)
+  }, [])
 
   const handleNext = () => {
-    setActiveIndex((i) => Math.min(i + 1, LAST_EVENT_INDEX))
+    setActiveIndex((prev) => {
+      const next = Math.min(prev + 1, LAST_EVENT_INDEX)
+      if (next > prev) {
+        setEnteringCollapsedIndex(prev)
+      }
+      return next
+    })
   }
 
   const nextDisabled = activeIndex >= LAST_EVENT_INDEX
+
+  const activeViewportHeightPx =
+    EXPANDED_STUB_MIN_HEIGHT_PX[activeIndex] + EXPANDED_LAYER_EXTRA_MIN_PX
 
   return (
     <div className="prototype">
@@ -129,10 +141,18 @@ export default function App() {
           <div className="frameStack">
             <div className="historyStack">
               {Array.from({ length: activeIndex }, (_, i) => (
-                <CollapsedEventRow key={`collapsed-${i}`} eventIndex={i} />
+                <CollapsedEventRow
+                  key={`collapsed-${i}`}
+                  eventIndex={i}
+                  isEntering={enteringCollapsedIndex === i}
+                  onEnteringAnimationEnd={handleCollapsedEnterAnimationEnd}
+                />
               ))}
             </div>
-            <div className="activeViewport">
+            <div
+              className="activeViewport"
+              style={{ '--active-viewport-height': `${activeViewportHeightPx}px` }}
+            >
               <ExpandedActiveEvent eventIndex={activeIndex} />
             </div>
           </div>
