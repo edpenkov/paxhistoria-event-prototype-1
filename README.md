@@ -6,13 +6,6 @@
 - Bottom-anchored event stack behavior
 - Collapsed history rows plus active viewport transition
 
-## How To Run
-
-```bash
-npm install
-npm run dev
-```
-
 ## Key Files
 
 - `src/App.jsx`
