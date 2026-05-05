@@ -31,6 +31,7 @@
 - Use this as a motion reference prototype, not production architecture
 - If production needs dynamic content height, use explicit heights or FLIP/layout animation
 - Do not animate to `height: auto`
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
