@@ -76,6 +76,73 @@
   width: 100%;
 }
 
+.historyStack {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.activeViewport {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.expandedActiveEvent {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.expandedActiveEvent__layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.expandedActiveEvent__layer--outgoing {
+  z-index: 1;
+  animation: expanded-active-out 300ms ease forwards;
+}
+
+.expandedActiveEvent__layer--incoming {
+  z-index: 2;
+  animation: expanded-active-in 300ms ease forwards;
+}
+
+.expandedActiveEvent__single {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@keyframes expanded-active-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes expanded-active-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .eventFrame {
   flex-shrink: 0;
   width: 100%;

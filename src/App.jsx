@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 
 const TONE_SUFFIXES = ['tone-a', 'tone-b', 'tone-c', 'tone-d']
@@ -8,6 +8,101 @@ const LAST_EVENT_INDEX = 6
 
 /** Placeholder body heights (px) per active event — only the inner stub uses these. */
 const EXPANDED_STUB_MIN_HEIGHT_PX = [80, 140, 220, 110, 190, 150, 200]
+
+function toneClassForIndex(index) {
+  return TONE_SUFFIXES[index % TONE_SUFFIXES.length]
+}
+
+/** Collapsed row: fixed 74px height via CSS; one DOM node per prior event index. */
+function CollapsedEventRow({ eventIndex }) {
+  return (
+    <div className={`eventFrame eventFrame--collapsed eventFrame--${toneClassForIndex(eventIndex)}`}>
+      <div className="eventContent">Event {eventIndex + 1} (collapsed)</div>
+    </div>
+  )
+}
+
+/** Label + stub for one expanded event index (shared by static view and transition layers). */
+function ExpandedEventBody({ eventIndex }) {
+  return (
+    <>
+      <span className="eventContent__label">Event {eventIndex + 1} (full)</span>
+      <div
+        className="eventContent__stub"
+        style={{ minHeight: EXPANDED_STUB_MIN_HEIGHT_PX[eventIndex] }}
+        aria-hidden
+      />
+    </>
+  )
+}
+
+const EXPANDED_LAYER_EXTRA_MIN_PX = 48
+
+function expandedBlockMinHeightPx(eventIndex) {
+  return EXPANDED_STUB_MIN_HEIGHT_PX[eventIndex] + EXPANDED_LAYER_EXTRA_MIN_PX
+}
+
+/** Expanded card for the active index; animates content inside activeViewport only. */
+function ExpandedActiveEvent({ eventIndex }) {
+  const [currentIndex, setCurrentIndex] = useState(eventIndex)
+  const [prevIndex, setPrevIndex] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const lastCommittedIndexRef = useRef(eventIndex)
+
+  useEffect(() => {
+    if (eventIndex === lastCommittedIndexRef.current) return
+    const previous = lastCommittedIndexRef.current
+    lastCommittedIndexRef.current = eventIndex
+    setPrevIndex(previous)
+    setCurrentIndex(eventIndex)
+    setIsAnimating(true)
+  }, [eventIndex])
+
+  const handleIncomingAnimationEnd = useCallback((e) => {
+    if (e.target !== e.currentTarget) return
+    if (e.animationName !== 'expanded-active-in') return
+    setPrevIndex(null)
+    setIsAnimating(false)
+  }, [])
+
+  const showTransitionLayers = isAnimating && prevIndex !== null
+
+  const shellMinHeight = showTransitionLayers
+    ? Math.max(expandedBlockMinHeightPx(prevIndex), expandedBlockMinHeightPx(currentIndex))
+    : undefined
+
+  return (
+    <div className={`eventFrame eventFrame--expanded eventFrame--${toneClassForIndex(currentIndex)}`}>
+      <div className="expandedActiveEvent" style={shellMinHeight ? { minHeight: shellMinHeight } : undefined}>
+        {showTransitionLayers ? (
+          <>
+            <div
+              className={`expandedActiveEvent__layer expandedActiveEvent__layer--outgoing eventFrame eventFrame--expanded eventFrame--${toneClassForIndex(prevIndex)}`}
+            >
+              <div className="eventContent">
+                <ExpandedEventBody eventIndex={prevIndex} />
+              </div>
+            </div>
+            <div
+              className={`expandedActiveEvent__layer expandedActiveEvent__layer--incoming eventFrame eventFrame--expanded eventFrame--${toneClassForIndex(currentIndex)}`}
+              onAnimationEnd={handleIncomingAnimationEnd}
+            >
+              <div className="eventContent">
+                <ExpandedEventBody eventIndex={currentIndex} />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="expandedActiveEvent__single">
+            <div className="eventContent">
+              <ExpandedEventBody eventIndex={currentIndex} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -32,28 +127,13 @@ export default function App() {
 
         <div className="timelineArea">
           <div className="frameStack">
-            {Array.from({ length: activeIndex }, (_, i) => (
-              <div
-                key={`event-${i}-collapsed`}
-                className={`eventFrame eventFrame--collapsed eventFrame--${TONE_SUFFIXES[i % TONE_SUFFIXES.length]}`}
-              >
-                <div className="eventContent">Event {i + 1} (collapsed)</div>
-              </div>
-            ))}
-            <div
-              key={`event-${activeIndex}-expanded`}
-              className={`eventFrame eventFrame--expanded eventFrame--${TONE_SUFFIXES[activeIndex % TONE_SUFFIXES.length]}`}
-            >
-              <div className="eventContent">
-                <span className="eventContent__label">Event {activeIndex + 1} (full)</span>
-                <div
-                  className="eventContent__stub"
-                  style={{
-                    minHeight: EXPANDED_STUB_MIN_HEIGHT_PX[activeIndex],
-                  }}
-                  aria-hidden
-                />
-              </div>
+            <div className="historyStack">
+              {Array.from({ length: activeIndex }, (_, i) => (
+                <CollapsedEventRow key={`collapsed-${i}`} eventIndex={i} />
+              ))}
+            </div>
+            <div className="activeViewport">
+              <ExpandedActiveEvent eventIndex={activeIndex} />
             </div>
           </div>
         </div>
