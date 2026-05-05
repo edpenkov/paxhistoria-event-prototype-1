@@ -176,10 +176,22 @@
 }
 
 .eventFrame--collapsed.eventFrame--collapsed-entering {
+  display: flex;
+  transform-origin: bottom center;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   animation:
     collapsed-row-enter-height var(--event-motion-duration) var(--event-motion-ease) forwards,
     collapsed-row-enter-opacity var(--event-motion-duration) var(--event-motion-ease)
+      var(--event-motion-delay-history) both;
+}
+
+.eventFrame--collapsed.eventFrame--collapsed-entering .eventContent {
+  transform-origin: bottom center;
+  animation:
+    collapsed-content-enter var(--event-motion-duration) var(--event-motion-ease) forwards,
+    collapsed-content-opacity var(--event-motion-duration) var(--event-motion-ease)
       var(--event-motion-delay-history) both;
 }
 
@@ -194,6 +206,25 @@
 }
 
 @keyframes collapsed-row-enter-opacity {
+  /* Invisible timeline so animationend clears entering state without affecting row opacity vs .eventContent fade */
+  from,
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes collapsed-content-enter {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes collapsed-content-opacity {
   from {
     opacity: 0;
   }
