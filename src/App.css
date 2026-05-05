@@ -94,6 +94,7 @@
   transition: height var(--event-motion-duration) var(--event-motion-ease);
   overflow: hidden;
   box-sizing: border-box;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .activeViewport > .eventFrame {
@@ -168,11 +169,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
 }
 
 .eventFrame--collapsed {
   height: 74px;
   opacity: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .eventFrame--collapsed.eventFrame--collapsed-entering {
@@ -236,6 +239,7 @@
 
 .eventFrame--expanded {
   align-items: stretch;
+  border: none;
 }
 
 .eventFrame--expanded .eventContent {
@@ -265,19 +269,19 @@
 }
 
 .eventFrame--tone-a {
-  background: #c62828;
+  background: transparent;
 }
 
 .eventFrame--tone-b {
-  background: #1565c0;
+  background: transparent;
 }
 
 .eventFrame--tone-c {
-  background: #6a1b9a;
+  background: transparent;
 }
 
 .eventFrame--tone-d {
-  background: #2e7d32;
+  background: transparent;
 }
 
 .reviewPanel__footer {
