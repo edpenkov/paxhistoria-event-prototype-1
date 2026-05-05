@@ -6,6 +6,12 @@
 - Bottom-anchored event stack behavior
 - Collapsed history rows plus active viewport transition
 
+## Run locally
+
+```bash
+npm install
+npm run dev
+
 ## Key Files
 
 - `src/App.jsx`
@@ -31,6 +37,11 @@
 - Use this as a motion reference prototype, not production architecture
 - If production needs dynamic content height, use explicit heights or FLIP/layout animation
 - Do not animate to `height: auto`
+
+```md
+## Demo
+
+See `video.mp4` for full interaction and motion reference.
 
 # React + Vite
 
